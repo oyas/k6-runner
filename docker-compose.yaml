@@ -1,0 +1,46 @@
+version: "3.9"
+services:
+  k6:
+    image: "grafana/k6:latest"
+    entrypoint:
+      - sh
+      - /mnt/scripts/start.sh
+    user: "root"
+    environment:
+      - TZ=JST-9
+      - K6_WEB_DASHBOARD=true
+      - K6_WEB_DASHBOARD_PERIOD=2s
+    expose:
+      - "5665"  # dashboard
+      - "6565"  # REST API
+      - "8000"  # start
+      - "8001"  # stop
+    ports:
+      - "5665:5665"
+      - "6565:6565"
+      - "8000:8000"
+      - "8001:8001"
+    volumes:
+      - ./scripts:/mnt/scripts:ro
+      - outputData:/mnt/output
+    restart: unless-stopped
+
+  deno:
+    image: "denoland/deno:1.42.3"
+    environment:
+      - TZ=Asia/Tokyo
+    command:
+      - run
+      - --allow-net
+      - --allow-read
+      - --allow-write
+      - --allow-env
+      - /mnt/scripts/server.tsx
+    ports:
+      - "9000:9000"
+    volumes:
+      - outputData:/mnt/output
+      - ./scripts:/mnt/scripts:ro
+
+volumes:
+  outputData:
