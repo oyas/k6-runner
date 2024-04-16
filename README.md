@@ -1,5 +1,7 @@
 # k6-runner
 
+## Run on local
+
 ```
 docker compose up
 ```
@@ -11,3 +13,7 @@ Input
 - Repo: `dummy`
 - Path: `dummy`
 - CommitHash: `dummy`
+
+## Run on GCP
+
+See [/deploy](/deploy)
