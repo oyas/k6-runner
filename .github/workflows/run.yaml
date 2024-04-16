@@ -37,22 +37,43 @@ jobs:
           echo "SCRIPT_PATH = $SCRIPT_PATH"
           echo "TAGS = $TAGS"
           echo "MEMO = $MEMO"
+          echo "TOKEN = $GITHUB_TOKEN"
         env:
           SCRIPT_PATH: ${{ inputs.script-path }}
           TAGS: ${{ inputs.tags }}
           MEMO: ${{ inputs.memo }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Start k6
         run: |
-          curl https://k6-runner-c7uvvb7taq-an.a.run.app/status
+          owner=${REPOSITORY//,/ }[0]
+          repo=${REPOSITORY//,/ }[1]
+          ref=${{ github.ref }}
+
+          set -x
+
+          curl -X POST https://k6-runner-c7uvvb7taq-an.a.run.app/start \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "
+              \"owner\": \"$owner\",
+              \"repo\": \"$repo\",
+              \"path\": \"$SCRIPT_PATH\",
+              \"commitHash\": \"$ref\",
+              \"memo\": \"$MEMO\"
+            "
         env:
+          REPOSITORY: ${{ github.repository }}
           SCRIPT_PATH: ${{ inputs.script-path }}
           TAGS: ${{ inputs.tags }}
           MEMO: ${{ inputs.memo }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Waiting for the job to finish
         run: |
           while true
           do
-            k6status=`curl -m 2 https://k6-runner-c7uvvb7taq-an.a.run.app/status | jq -r '.status'`
+            result=`curl -m 2 https://k6-runner-c7uvvb7taq-an.a.run.app/status`
+            echo -e "\r$result"
+            k6status=`echo "$result" | jq -r '.status'`
             if [[ $k6status == "STOP" ]]; then
               break
             fi
