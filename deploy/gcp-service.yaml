@@ -1,0 +1,80 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: k6-runner
+  labels:
+    cloud.googleapis.com/location: asia-northeast1
+spec:
+  template:
+    metadata:
+      annotations:
+        run.googleapis.com/sessionAffinity: 'true'
+        autoscaling.knative.dev/maxScale: '1'
+    spec:
+      containerConcurrency: 5
+      timeoutSeconds: 300
+      containers:
+      - name: deno
+        image: docker.io/denoland/deno:1.42.3
+        args:
+        - run
+        - --allow-net
+        - --allow-read
+        - --allow-write
+        - --allow-env
+        - https://raw.githubusercontent.com/oyas/k6-runner/main/scripts/server.tsx
+        ports:
+        - name: http1
+          containerPort: 8080
+        env:
+        - name: TZ
+          value: Asia/Tokyo
+        - name: K6_DASHBOARD_HOST
+          value: localhost:5665
+        - name: K6_API_HOST
+          value: localhost:6565
+        - name: K6_START_URL
+          value: http://localhost:8000
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 512Mi
+        volumeMounts:
+        - name: outputData
+          mountPath: /mnt/output
+        startupProbe:
+          timeoutSeconds: 240
+          periodSeconds: 240
+          failureThreshold: 1
+          tcpSocket:
+            port: 8080
+      - name: k6
+        image: docker.io/grafana/k6:latest
+        command:
+        - /bin/sh
+        args:
+        - -c
+        - wget https://raw.githubusercontent.com/oyas/k6-runner/main/scripts/start.sh
+          -O - | sh
+        env:
+        - name: TZ
+          value: JST-9
+        - name: K6_WEB_DASHBOARD
+          value: 'true'
+        - name: K6_WEB_DASHBOARD_PERIOD
+          value: 2s
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 512Mi
+        volumeMounts:
+        - name: outputData
+          mountPath: /mnt/output
+      volumes:
+      - name: outputData
+        emptyDir:
+          medium: Memory
+          sizeLimit: 512M
+  traffic:
+  - percent: 100
+    latestRevision: true
