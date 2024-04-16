@@ -61,7 +61,7 @@ jobs:
               \"path\": \"$SCRIPT_PATH\",
               \"commitHash\": \"$hash\",
               \"memo\": \"$MEMO\"
-            }"
+            }" | jq
         env:
           REPOSITORY: ${{ github.repository }}
           SCRIPT_PATH: ${{ inputs.script-path }}
@@ -72,7 +72,7 @@ jobs:
         run: |
           while true
           do
-            result=`curl -m 2 https://k6-runner-c7uvvb7taq-an.a.run.app/status`
+            result=`curl -q -m 2 https://k6-runner-c7uvvb7taq-an.a.run.app/status`
             echo -e "\r$result"
             k6status=`echo "$result" | jq -r '.status'`
             if [[ $k6status == "STOP" ]]; then
