@@ -48,3 +48,14 @@ jobs:
           SCRIPT_PATH: ${{ inputs.script-path }}
           TAGS: ${{ inputs.tags }}
           MEMO: ${{ inputs.memo }}
+      - name: Waiting for the job to finish
+        run: |
+          while true
+          do
+            curl https://k6-runner-c7uvvb7taq-an.a.run.app/status | jq -s '.status'
+            break
+          done
+        env:
+          SCRIPT_PATH: ${{ inputs.script-path }}
+          TAGS: ${{ inputs.tags }}
+          MEMO: ${{ inputs.memo }}
