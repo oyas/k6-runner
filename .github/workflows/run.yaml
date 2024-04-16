@@ -43,6 +43,7 @@ jobs:
           TAGS: ${{ inputs.tags }}
           MEMO: ${{ inputs.memo }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Start k6
         run: |
           arr=(${REPOSITORY//// })
@@ -52,7 +53,7 @@ jobs:
 
           set -x
 
-          curl -X POST https://k6-runner-c7uvvb7taq-an.a.run.app/start \
+          result=`curl -X POST https://k6-runner-c7uvvb7taq-an.a.run.app/start \
             -H "Authorization: Bearer $GITHUB_TOKEN" \
             -H "Content-Type: application/json" \
             -d "{
@@ -61,13 +62,20 @@ jobs:
               \"path\": \"$SCRIPT_PATH\",
               \"commitHash\": \"$hash\",
               \"memo\": \"$MEMO\"
-            }" | jq
+            }"`
+          echo "$result" | jq
+          st=`echo "$result" | jq -r '.status'`
+          if [[ $st != "START" ]]; then
+            echo "failed to start"
+            exit 1
+          fi
         env:
           REPOSITORY: ${{ github.repository }}
           SCRIPT_PATH: ${{ inputs.script-path }}
           TAGS: ${{ inputs.tags }}
           MEMO: ${{ inputs.memo }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Waiting for the job to finish
         run: |
           echo "Dashboard: https://k6-runner-c7uvvb7taq-an.a.run.app/"
