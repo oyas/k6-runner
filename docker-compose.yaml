@@ -29,6 +29,10 @@ services:
     image: "denoland/deno:1.42.3"
     environment:
       - TZ=Asia/Tokyo
+      - PORT=9000
+      - K6_DASHBOARD_HOST=k6:5665
+      - K6_API_HOST=k6:6565
+      - K6_START_URL=http://k6:8000
     command:
       - run
       - --allow-net

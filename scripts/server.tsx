@@ -12,9 +12,10 @@ import { delay } from "https://deno.land/std/async/delay.ts";
 import { decodeBase64 } from "https://deno.land/std/encoding/base64.ts";
 import { ZodError, z } from "https://deno.land/x/zod/mod.ts";
 
-const k6DashboardHost = 'k6:5665'
-const k6ApiHost = 'k6:6565'
-const k6StartUrl = 'http://k6:8000'
+const PORT = Deno.env.get("PORT") ?? '9000'
+const k6DashboardHost = Deno.env.get("K6_DASHBOARD_HOST") ?? 'k6:5665'
+const k6ApiHost = Deno.env.get("K6_API_HOST") ?? 'k6:6565'
+const k6StartUrl = Deno.env.get("K6_START_URL") ?? 'http://k6:8000'
 const outputDir = '/mnt/output'
 
 const GITHUB_HOST = Deno.env.get("GITHUB_HOST") ?? 'github.com'
@@ -509,7 +510,7 @@ function main() {
 
     proxyToK6(app)
 
-    Deno.serve({ port: 9000 }, app.fetch)
+    Deno.serve({ port: PORT }, app.fetch)
 }
 
 main()
