@@ -63,6 +63,9 @@ jobs:
               \"commitHash\": \"$hash\",
               \"memo\": \"$MEMO\"
             }"`
+
+          set +x
+
           echo "$result" | jq
           st=`echo "$result" | jq -r '.status'`
           if [[ $st != "START" ]]; then
