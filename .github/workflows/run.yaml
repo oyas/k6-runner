@@ -45,9 +45,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Start k6
         run: |
-          owner=${REPOSITORY//,/ }[0]
-          repo=${REPOSITORY//,/ }[1]
-          ref=${{ github.ref }}
+          arr=(${REPOSITORY//// })
+          owner=arr[0]
+          repo=arr[1]
+          hash=${{ github.sha }}
 
           set -x
 
@@ -58,7 +59,7 @@ jobs:
               \"owner\": \"$owner\",
               \"repo\": \"$repo\",
               \"path\": \"$SCRIPT_PATH\",
-              \"commitHash\": \"$ref\",
+              \"commitHash\": \"$hash\",
               \"memo\": \"$MEMO\"
             "
         env:
