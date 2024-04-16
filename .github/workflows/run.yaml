@@ -36,9 +36,10 @@ jobs:
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - name: Show inputs
-        run: echo "SCRIPT_PATH = $SCRIPT_PATH"
-        run: echo "TAGS = $TAGS"
-        run: echo "MEMO = $MEMO"
+        run: |
+          echo "SCRIPT_PATH = $SCRIPT_PATH"
+          echo "TAGS = $TAGS"
+          echo "MEMO = $MEMO"
         env:
           SCRIPT_PATH: ${{ inputs.script-path }}
           TAGS: ${{ inputs.tags }}
