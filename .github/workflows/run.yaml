@@ -46,8 +46,8 @@ jobs:
       - name: Start k6
         run: |
           arr=(${REPOSITORY//// })
-          owner=arr[0]
-          repo=arr[1]
+          owner=${arr[0]}
+          repo=${arr[1]}
           hash=${{ github.sha }}
 
           set -x
