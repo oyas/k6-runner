@@ -70,6 +70,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Waiting for the job to finish
         run: |
+          echo "Dashboard: https://k6-runner-c7uvvb7taq-an.a.run.app/"
+          echo "k6-runner menu: https://k6-runner-c7uvvb7taq-an.a.run.app/menu"
           while true
           do
             result=`curl -q -m 2 https://k6-runner-c7uvvb7taq-an.a.run.app/status`
