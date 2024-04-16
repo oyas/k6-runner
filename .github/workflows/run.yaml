@@ -55,13 +55,13 @@ jobs:
           curl -X POST https://k6-runner-c7uvvb7taq-an.a.run.app/start \
             -H "Authorization: Bearer $GITHUB_TOKEN" \
             -H "Content-Type: application/json" \
-            -d "
+            -d "{
               \"owner\": \"$owner\",
               \"repo\": \"$repo\",
               \"path\": \"$SCRIPT_PATH\",
               \"commitHash\": \"$hash\",
               \"memo\": \"$MEMO\"
-            "
+            }"
         env:
           REPOSITORY: ${{ github.repository }}
           SCRIPT_PATH: ${{ inputs.script-path }}
