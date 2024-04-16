@@ -11,7 +11,7 @@ spec:
         run.googleapis.com/sessionAffinity: 'true'
         autoscaling.knative.dev/maxScale: '1'
     spec:
-      containerConcurrency: 5
+      containerConcurrency: 50
       timeoutSeconds: 300
       containers:
       - name: deno
