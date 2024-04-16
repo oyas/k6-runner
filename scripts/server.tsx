@@ -19,7 +19,7 @@ const k6StartUrl = Deno.env.get("K6_START_URL") ?? 'http://k6:8000'
 const outputDir = '/mnt/output'
 
 const GITHUB_HOST = Deno.env.get("GITHUB_HOST") ?? 'github.com'
-const GITHUB_API_BASE_URL = `https://${GITHUB_HOST}/api/v3`
+const GITHUB_API_BASE_URL = Deno.env.get("GITHUB_API_BASE_URL") ?? `https://api.github.com`
 
 const Layout: FC = (props) => {
     return (

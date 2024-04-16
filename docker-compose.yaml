@@ -33,6 +33,7 @@ services:
       - K6_DASHBOARD_HOST=k6:5665
       - K6_API_HOST=k6:6565
       - K6_START_URL=http://k6:8000
+      - GITHUB_API_BASE_URL=https://api.github.com
     command:
       - run
       - --allow-net
